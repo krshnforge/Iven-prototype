@@ -338,7 +338,7 @@ async function fetchAndRenderStats(){
     if(businessIdx === -1) businessIdx = Math.max(1, header.length-2);
     totalEl.innerText = total;
     latestEl.innerText = `${last[businessIdx] || '—'} • ${last[emailIdx] || '—'}`;
-    tokensEl.innerText = `${total * 10} (≈ ${total}×10)`;
+    animateTokenCount(total * 10);
   }catch(err){
     totalEl.innerText = '—';
     latestEl.innerText = 'Error loading sheet';
@@ -369,7 +369,28 @@ document.addEventListener('keydown', (e)=>{
     const u = prompt('Paste published Google Sheet CSV link (or leave blank):', SHEET_CSV_URL || '');
     if(u!==null){ SHEET_CSV_URL = u.trim(); fetchAndRenderStats(); }
   }
-});
+});// ===== Animated Token Counter =====
+function animateTokenCount(newCount) {
+  const tokenEl = document.getElementById('tokenCount') || document.getElementById('tokens');
+  if (!tokenEl) return;
+
+  const current = Number(tokenEl.innerText.replace(/\D/g,'')) || 0;
+  const diff = newCount - current;
+  if (diff === 0) return;
+
+  const steps = 20; // smooth animation
+  const step = diff / steps;
+  let i = 0;
+
+  const interval = setInterval(() => {
+    i++;
+    tokenEl.innerText = Math.round(current + step * i);
+    if (i >= steps) {
+      clearInterval(interval);
+      tokenEl.innerText = newCount;
+    }
+  }, 50); // total ~1 second
+}
 </script>
 </body>
 </html>
