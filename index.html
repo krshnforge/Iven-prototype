@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVEN Prototype — KrshnForge</title>
+<style>
+  body{font-family:system-ui,Arial;background:#0f1720;color:#e6eef8;padding:14px}
+  .card{background:#071426;padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+  h1{margin:0 0 8px;font-size:22px}
+  input,textarea,button{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #213041;background:#06111a;color:#e6eef8}
+  .btn{background:#0a84ff;border:none;color:#fff;font-weight:600;padding:10px;border-radius:8px}
+  footer{font-size:12px;color:#94a7c1;margin-top:12px;text-align:center}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>IVEN — Prototype</h1>
+    <p style="color:#bcd2ee">KrshnForge Experimental Invoice + Signup Tool</p>
+    <hr style="border-color:#132033">
+
+    <h3>Invoice Generator</h3>
+    <label>From:</label>
+    <input id="from" placeholder="Your shop name">
+    <label>To:</label>
+    <input id="to" placeholder="Customer name">
+    <label>Item:</label>
+    <input id="item" placeholder="Item name">
+    <label>Price (₹):</label>
+    <input id="price" type="number" value="0">
+    <button id="make" class="btn">Generate & Download PDF</button>
+
+    <hr style="border-color:#132033">
+    <h3>Signup</h3>
+    <p>Tap below to open signup form (Google Form)</p>
+    <a id="signupLink" class="btn" href="https://forms.gle/RhxLSuZAsUor57JE9" target="_blank">Open Signup Form</a>
+
+    <footer>KrshnForge © IVEN Prototype</footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    const { jsPDF } = window.jspdf;
+    document.getElementById('make').addEventListener('click
