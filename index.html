@@ -1,396 +1,112 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IVEN — Cyberpunk Prototype</title>
-<link rel="icon" href="data:,">
-<style>
-  :root{
-    --bg-1:#050116; --bg-2:#0b0f2a;
-    --glass: rgba(255,255,255,0.04);
-    --muted: #92a0c0; --accent:#ff4ec8; --accent-2:#5be3ff;
-    --card-shadow: 0 10px 30px rgba(2,6,23,0.6);
-    --radius:14px;
-  }
-  html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;}
-  body{
-    background: radial-gradient(1200px 500px at 10% 10%, rgba(91,227,255,0.06), transparent),
-                radial-gradient(800px 600px at 90% 90%, rgba(255,78,200,0.06), transparent),
-                linear-gradient(180deg,var(--bg-1),var(--bg-2));
-    color:#e6eef8; -webkit-font-smoothing:antialiased;
-    padding:22px; box-sizing:border-box;
-  }
-
-  .wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start;}
-  header{grid-column:1/ -1;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-  .brand{display:flex;gap:12px;align-items:center;}
-  .logo{
-    height:56px;width:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;
-    background: linear-gradient(135deg,var(--accent),var(--accent-2));
-    box-shadow:0 8px 30px rgba(91,227,255,0.12), inset 0 -6px 18px rgba(0,0,0,0.15);
-    font-weight:900;color:#071022;font-size:20px;
-    transform:skewX(-6deg);
-  }
-  h1{font-size:18px;margin:0;letter-spacing:0.4px}
-  p.sub{margin:2px 0 0;color:var(--muted);font-size:13px}
-
-  /* left column card */
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:18px; border-radius:var(--radius); box-shadow:var(--card-shadow); border:1px solid rgba(255,255,255,0.03);}
-
-  .big{padding:22px}
-  label{display:block;color:var(--muted);font-size:12px;margin-top:12px}
-  input,textarea,button,select{
-    width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
-    color:inherit;outline:none;box-sizing:border-box;font-size:14px;
-  }
-  textarea{min-height:70px;resize:vertical}
-  .row{display:flex;gap:12px}
-  .row input{flex:1}
-
-  .btn{
-    display:inline-block;padding:10px 14px;background:linear-gradient(90deg,var(--accent),var(--accent-2));
-    color:#071022;font-weight:700;border-radius:10px;border:none;cursor:pointer;margin-top:12px;
-    box-shadow:0 10px 30px rgba(91,227,255,0.09);
-  }
-  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:10px;border-radius:10px}
-
-  /* right column */
-  .side{position:relative}
-  .stats{display:flex;flex-direction:column;gap:12px}
-  .stat{padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03)}
-  .stat h3{margin:0;font-size:14px}
-  .big-number{font-size:28px;font-weight:800;color:var(--accent-2);margin-top:6px}
-
-  .preview{
-    margin-top:12px;padding:12px;border-radius:10px;background:linear-gradient(90deg, rgba(91,227,255,0.03), rgba(255,78,200,0.03));
-    border:1px solid rgba(255,255,255,0.02); font-size:13px;color:var(--muted)
-  }
-
-  nav.bottom{
-    position:fixed;left:50%;transform:translateX(-50%);bottom:22px;background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.25));
-    padding:8px 12px;border-radius:999px;display:flex;gap:8px;border:1px solid rgba(255,255,255,0.03);
-    box-shadow:0 10px 30px rgba(2,6,23,0.6);
-  }
-  .nav-btn{padding:8px 12px;border-radius:999px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-weight:700}
-  .nav-btn.active{color:var(--accent);text-shadow:0 6px 18px rgba(91,227,255,0.06)}
-
-  /* invoice preview */
-  .invoice-preview{margin-top:12px;background:#06101b;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
-  .line{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:6px 0}
-
-  /* small screens */
-  @media (max-width:900px){
-    .wrap{grid-template-columns:1fr; padding-bottom:90px}
-    nav.bottom{left:14px;transform:none;right:14px}
-  }
-
-  /* neon animated underline */
-  .brand h1::after{
-    content:'';display:block;height:3px;width:60px;border-radius:3px;margin-top:6px;
-    background:linear-gradient(90deg,var(--accent),var(--accent-2)); box-shadow:0 6px 20px rgba(91,227,255,0.08);
-    animation:glow 2.6s linear infinite;
-  }
-  @keyframes glow{0%{filter:blur(0)}50%{filter:blur(4px)}100%{filter:blur(0)}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IVEN — Cyber Forge</title>
+  <style>
+    :root{
+      --bg-1:#050116;--bg-2:#0b0f2a;
+      --accent:#ff4ec8;--accent-2:#5be3ff;
+      --muted:#9aa5be;
+      --glass:rgba(255,255,255,0.04);
+      --radius:14px;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    body{
+      background:radial-gradient(1000px 600px at 10% 10%,rgba(91,227,255,0.06),transparent),
+                 radial-gradient(800px 600px at 90% 90%,rgba(255,78,200,0.06),transparent),
+                 linear-gradient(180deg,var(--bg-1),var(--bg-2));
+      color:#e6eef8;padding:24px;box-sizing:border-box;
+    }
+    .wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 340px;gap:18px;}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+          border-radius:var(--radius);padding:20px;box-shadow:0 10px 30px rgba(2,6,23,0.5);}
+    h2{margin:0 0 8px 0}
+    input,textarea,button{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);
+      background:rgba(0,0,0,0.15);color:#fff;font-size:14px;margin-top:6px;}
+    .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));border:0;color:#071022;font-weight:700;cursor:pointer;}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--muted);}
+    nav.bottom{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+      background:rgba(0,0,0,0.4);padding:10px 18px;border-radius:30px;display:flex;gap:16px;}
+    .nav-btn{background:transparent;border:0;color:var(--muted);}
+    .nav-btn.active{color:var(--accent);}
+    @media(max-width:900px){.wrap{grid-template-columns:1fr;}}
+  </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="logo">IV</div>
-        <div>
-          <h1>IVEN — Cyber Forge</h1>
-          <p class="sub">Invoice • Signup • Business tokens</p>
-        </div>
-      </div>
-      <div style="display:flex;gap:10px;align-items:center">
-        <button class="ghost" id="docsBtn" title="Open signup form">Open Signup Form</button>
-        <button class="ghost" id="refreshStats" title="Refresh stats">Refresh</button>
-      </div>
-    </header>
+    <div class="card">
+      <h2>Invoice Generator</h2>
+      <label>From</label><input id="from" value="KrshnForge Shop">
+      <label>To</label><input id="to" placeholder="Customer name">
+      <label>Item</label><input id="item" placeholder="Item description">
+      <label>Price (₹)</label><input id="price" type="number" value="0">
+      <label>Notes</label><textarea id="notes"></textarea>
+      <button id="makePdf" class="btn">Generate & Download PDF</button>
+    </div>
 
-    <!-- left: tool -->
-    <section class="card big">
-      <h2 style="margin:0 0 10px">Invoice Generator</h2>
-      <div>
-        <label>From</label>
-        <input id="from" placeholder="Your shop / business name" value="KrshnForge Shop">
-        <label>To</label>
-        <input id="to" placeholder="Customer name">
-        <div class="row">
-          <div style="flex:2">
-            <label>Item</label>
-            <input id="item" placeholder="Item description">
-          </div>
-          <div style="flex:1">
-            <label>Price (₹)</label>
-            <input id="price" type="number" value="0" min="0">
-          </div>
-        </div>
-
-        <label>Notes (optional)</label>
-        <textarea id="notes" placeholder="Any notes to appear on invoice"></textarea>
-
-        <div style="display:flex;gap:10px;align-items:center">
-          <button class="btn" id="makePdf">Generate & Download PDF</button>
-          <button class="ghost" id="previewBtn">Preview</button>
-        </div>
-
-        <div class="invoice-preview" id="invoicePreview" style="display:none">
-          <div style="font-weight:800;margin-bottom:8px">Invoice Preview</div>
-          <div class="line"><div>From</div><div id="pFrom"></div></div>
-          <div class="line"><div>To</div><div id="pTo"></div></div>
-          <div class="line"><div>Item</div><div id="pItem"></div></div>
-          <div class="line"><div>Price</div><div id="pPrice"></div></div>
-          <div class="line"><div>Notes</div><div id="pNotes"></div></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- right: stats & quick actions -->
-    <aside class="card side">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <h3 style="margin:0">Live Stats</h3>
-          <p style="margin:6px 0 0;color:var(--muted);font-size:13px">Signups & Tokens</p>
-        </div>
-      </div>
-
-      <div class="stats" style="margin-top:12px">
-        <div class="stat">
-          <h3>Total Signups</h3>
-          <div class="big-number" id="totalSignups">—</div>
-        </div>
-
-        <div class="stat">
-          <h3>Latest Signup</h3>
-          <div style="margin-top:8px;color:var(--muted);font-size:13px" id="latestSignup">—</div>
-        </div>
-
-        <div class="stat">
-          <h3>Tokens Issued (free)</h3>
-          <div style="margin-top:8px;color:var(--accent);font-weight:700" id="totalTokens">—</div>
-          <div class="preview" style="margin-top:10px">Each signup gets <strong>10 free tokens</strong> automatically.</div>
-        </div>
-      </div>
-
-      <div style="margin-top:12px">
-        <button class="btn" id="openSite">Open IVEN Site</button>
-      </div>
-    </aside>
+    <div class="card">
+      <h3>Live Stats</h3>
+      <p>Total Signups: <span id="totalSignups">0</span></p>
+      <p>Latest Signup: <span id="latestSignup">—</span></p>
+      <p>Tokens Issued: <span id="tokenCount">0</span></p>
+      <button id="refreshStats" class="ghost">Refresh</button>
+    </div>
   </div>
 
-  <!-- bottom nav -->
   <nav class="bottom">
-    <button class="nav-btn active" data-view="home">HOME</button>
-    <button class="nav-btn" data-view="form">SIGNUP</button>
-    <button class="nav-btn" data-view="stats">STATS</button>
-    <button class="nav-btn" data-view="profile">PROFILE</button>
+    <button class="nav-btn active">HOME</button>
+    <button class="nav-btn">SIGNUP</button>
+    <button class="nav-btn">STATS</button>
+    <button class="nav-btn">PROFILE</button>
   </nav>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script>
-/*
-  IMPORTANT:
-  - Your Google Form link is already inserted below (signupForm).
-  - To show live sheet stats:
-     1) Open your Google Sheet (Form responses) -> File -> Publish to web -> choose CSV format -> Copy CSV link
-     2) Paste the CSV link into SHEET_CSV_URL below (replace the placeholder)
-  - If you don't paste a sheet link the dashboard will show placeholder data.
-*/
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    const signupForm = 'https://forms.gle/RhxLSuZAsUor57JE9';
+    let SHEET_CSV_URL = ''; // 👈 yahan apna published CSV link daalna hai agar chaho
 
-const signupForm = 'https://forms.gle/RhxLSuZAsUor57JE9'; // your form link (already set)
-let SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTGcw0IPTiS9dS7C8Jz0CBLuozkJBlSqrPfij68738ODwWZv6V56-FsEZ-Qazqovd9z-flqoUzR1ub7/pub?gid=1075663640&single=true&output=csv';
+    // PDF generator
+    const { jsPDF } = window.jspdf;
+    document.getElementById("makePdf").onclick = () => {
+      const from = document.getElementById("from").value;
+      const to = document.getElementById("to").value;
+      const item = document.getElementById("item").value;
+      const price = document.getElementById("price").value;
+      const notes = document.getElementById("notes").value;
+      const doc = new jsPDF({unit:"pt",format:"a4"});
+      doc.text(`From: ${from}`,40,60);
+      doc.text(`To: ${to}`,40,80);
+      doc.text(`Item: ${item}`,40,100);
+      doc.text(`Price: ₹${price}`,40,120);
+      doc.text(`Notes: ${notes}`,40,140);
+      doc.save(`invoice_${Date.now()}.pdf`);
+    };
 
-/* UI hooks */
-const docsBtn = document.getElementById('docsBtn');
-const openSite = document.getElementById('openSite');
-const refreshStats = document.getElementById('refreshStats');
-
-docsBtn.onclick = ()=> window.open(signupForm, '_blank');
-openSite.onclick = ()=> window.open(location.href, '_blank'); // open same page in new tab
-refreshStats.onclick = ()=> fetchAndRenderStats();
-<!-- auto-refresh: paste this AFTER the line: refreshStats.onclick = () => fetchAndRenderStats(); -->
-<script>
-/* Auto-refresh: periodically fetch & render stats (every 30s) */
-(() => {
-  // frequency (ms)
-  const REFRESH_INTERVAL = 30 * 1000; // 30 seconds
-
-  // prevent overlapping requests
-  let isFetching = false;
-
-  async function safeFetchAndRender() {
-    if (isFetching) return;      // already running -> skip this cycle
-    try {
-      isFetching = true;
-      await fetchAndRenderStats(); // your existing function
-    } catch (err) {
-      console.error('Auto-refresh error:', err);
-    } finally {
-      isFetching = false;
+    // CSV fetch
+    async function fetchAndRenderStats(){
+      const totalEl=document.getElementById("totalSignups");
+      const latestEl=document.getElementById("latestSignup");
+      const tokenEl=document.getElementById("tokenCount");
+      totalEl.textContent="...";
+      latestEl.textContent="Loading...";
+      tokenEl.textContent="...";
+      if(!SHEET_CSV_URL){totalEl.textContent="0";latestEl.textContent="No sheet";tokenEl.textContent="0";return;}
+      try{
+        const res=await fetch(SHEET_CSV_URL);
+        const csv=await res.text();
+        const lines=csv.trim().split(/\r?\n/);
+        const rows=lines.slice(1);
+        const total=rows.length;
+        const last=rows[rows.length-1]?.split(",")||["—"];
+        totalEl.textContent=total;
+        latestEl.textContent=last[1]||"—";
+        tokenEl.textContent=total*10;
+      }catch(e){latestEl.textContent="Error";console.error(e);}
     }
-  }
-
-  // run once immediately, then set interval
-  safeFetchAndRender();
-  const autoRefreshId = setInterval(safeFetchAndRender, REFRESH_INTERVAL);
-
-  // (optional) expose a function to stop auto-refresh from console if needed
-  window.__IVEN_stopAutoRefresh = () => {
-    clearInterval(autoRefreshId);
-    console.info('IVEN auto-refresh stopped');
-  };
-})();
-</script>
-/* bottom nav */
-document.querySelectorAll('.nav-btn').forEach(b=>{
-  b.addEventListener('click', (e)=>{
-    document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    // simple behavior: scroll to top (mobile)
-    window.scrollTo({top:0,behavior:'smooth'});
-  });
-});
-
-/* Preview toggle */
-document.getElementById('previewBtn').onclick = ()=>{
-  const prev = document.getElementById('invoicePreview');
-  const from = document.getElementById('from').value;
-  document.getElementById('pFrom').innerText = from || '—';
-  document.getElementById('pTo').innerText = document.getElementById('to').value || '—';
-  document.getElementById('pItem').innerText = document.getElementById('item').value || '—';
-  document.getElementById('pPrice').innerText = '₹' + (document.getElementById('price').value || '0');
-  document.getElementById('pNotes').innerText = document.getElementById('notes').value || '—';
-  prev.style.display = (prev.style.display === 'none' || !prev.style.display) ? 'block' : 'none';
-};
-
-/* PDF generation */
-const { jsPDF } = window.jspdf;
-document.getElementById('makePdf').addEventListener('click', ()=>{
-  const from = document.getElementById('from').value || 'Seller';
-  const to = document.getElementById('to').value || 'Customer';
-  const item = document.getElementById('item').value || 'Item';
-  const price = Number(document.getElementById('price').value || 0);
-  const notes = document.getElementById('notes').value || '';
-  const doc = new jsPDF({unit:'pt',format:'a4'});
-  // simple styled layout
-  doc.setFillColor(5,1,22);
-  doc.rect(0,0,595,72,'F');
-  doc.setFontSize(18); doc.setTextColor(255,255,255);
-  doc.text('IVEN Invoice', 40, 40);
-  doc.setTextColor(16,24,34); doc.setFontSize(12);
-  doc.setFillColor(245,245,245);
-  doc.rect(36,90,520,260,'F');
-  doc.setTextColor(10,14,22);
-  doc.setFontSize(12);
-  let y = 120;
-  doc.text(`From: ${from}`, 50, y); y += 20;
-  doc.text(`To: ${to}`, 50, y); y += 20;
-  doc.text(`Item: ${item}`, 50, y); y += 20;
-  doc.text(`Price: ₹${price}`, 50, y); y += 20;
-  if(notes){ doc.text('Notes:',50,y); doc.text(notes,110,y); }
-  doc.save(`invoice_${Date.now()}.pdf`);
-});
-
-/* Stats fetch & render */
-async function fetchAndRenderStats(){
-  const totalEl = document.getElementById('totalSignups');
-  const latestEl = document.getElementById('latestSignup');
-  const tokensEl = document.getElementById('totalTokens');
-
-  // loading state
-  totalEl.innerText = '...';
-  latestEl.innerText = 'loading...';
-  tokensEl.innerText = '...';
-
-  if(!SHEET_CSV_URL){
-    // No sheet link provided — show placeholders
-    totalEl.innerText = '0';
-    latestEl.innerText = 'No data (publish CSV to enable)';
-    tokensEl.innerText = '0';
-    return;
-  }
-
-  try{
-    const res = await fetch(SHEET_CSV_URL);
-    if(!res.ok) throw new Error('CSV fetch failed');
-    const csv = await res.text();
-    // parse simple CSV (each row is a response). CSV header expected: Timestamp,Business Name,Email
-    const lines = csv.trim().split(/\r?\n/).filter(Boolean);
-    if(lines.length <= 1){
-      totalEl.innerText = '0';
-      latestEl.innerText = 'No signups yet';
-      tokensEl.innerText = '0';
-      return;
-    }
-    const header = lines[0].split(',');
-    const rows = lines.slice(1).map(r=>parseCSVLine(r));
-    const total = rows.length;
-    const last = rows[rows.length-1];
-    // attempt to read email/business from header names
-    let emailIdx = header.findIndex(h=>/email/i.test(h));
-    let businessIdx = header.findIndex(h=>/business|name/i.test(h) && !/timestamp/i.test(h));
-    // fallback positions
-    if(emailIdx === -1) emailIdx = header.length-1;
-    if(businessIdx === -1) businessIdx = Math.max(1, header.length-2);
-    totalEl.innerText = total;
-    latestEl.innerText = `${last[businessIdx] || '—'} • ${last[emailIdx] || '—'}`;
-    animateTokenCount(total * 10);
-  }catch(err){
-    totalEl.innerText = '—';
-    latestEl.innerText = 'Error loading sheet';
-    tokensEl.innerText = '—';
-    console.error(err);
-  }
-}
-
-// naive CSV line parser that accounts for quoted commas
-function parseCSVLine(line){
-  const out=[]; let cur='', inQuotes=false;
-  for(let i=0;i<line.length;i++){
-    const ch=line[i];
-    if(ch==='\"'){ if(inQuotes && line[i+1]==='\"'){ cur+='"'; i++; } else { inQuotes=!inQuotes; } continue;}
-    if(ch===',' && !inQuotes){ out.push(cur); cur=''; continue; }
-    cur+=ch;
-  }
-  out.push(cur);
-  return out.map(s=>s.trim());
-}
-
-/* initial */
-fetchAndRenderStats();
-
-/* small helper: allow paste of CSV url via prompt */
-document.addEventListener('keydown', (e)=>{
-  if(e.ctrlKey && e.key==='k'){ // ctrl+k opens prompt
-    const u = prompt('Paste published Google Sheet CSV link (or leave blank):', SHEET_CSV_URL || '');
-    if(u!==null){ SHEET_CSV_URL = u.trim(); fetchAndRenderStats(); }
-  }
-});// ===== Animated Token Counter =====
-function animateTokenCount(newCount) {
-  const tokenEl = document.getElementById('tokenCount') || document.getElementById('tokens');
-  if (!tokenEl) return;
-
-  const current = Number(tokenEl.innerText.replace(/\D/g,'')) || 0;
-  const diff = newCount - current;
-  if (diff === 0) return;
-
-  const steps = 20; // smooth animation
-  const step = diff / steps;
-  let i = 0;
-
-  const interval = setInterval(() => {
-    i++;
-    tokenEl.innerText = Math.round(current + step * i);
-    if (i >= steps) {
-      clearInterval(interval);
-      tokenEl.innerText = newCount;
-    }
-  }, 50); // total ~1 second
-}
-</script>
+    document.getElementById("refreshStats").onclick=fetchAndRenderStats;
+    fetchAndRenderStats();
+  </script>
 </body>
 </html>
