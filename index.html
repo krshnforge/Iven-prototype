@@ -212,7 +212,39 @@ const refreshStats = document.getElementById('refreshStats');
 docsBtn.onclick = ()=> window.open(signupForm, '_blank');
 openSite.onclick = ()=> window.open(location.href, '_blank'); // open same page in new tab
 refreshStats.onclick = ()=> fetchAndRenderStats();
+<!-- auto-refresh: paste this AFTER the line: refreshStats.onclick = () => fetchAndRenderStats(); -->
+<script>
+/* Auto-refresh: periodically fetch & render stats (every 30s) */
+(() => {
+  // frequency (ms)
+  const REFRESH_INTERVAL = 30 * 1000; // 30 seconds
 
+  // prevent overlapping requests
+  let isFetching = false;
+
+  async function safeFetchAndRender() {
+    if (isFetching) return;      // already running -> skip this cycle
+    try {
+      isFetching = true;
+      await fetchAndRenderStats(); // your existing function
+    } catch (err) {
+      console.error('Auto-refresh error:', err);
+    } finally {
+      isFetching = false;
+    }
+  }
+
+  // run once immediately, then set interval
+  safeFetchAndRender();
+  const autoRefreshId = setInterval(safeFetchAndRender, REFRESH_INTERVAL);
+
+  // (optional) expose a function to stop auto-refresh from console if needed
+  window.__IVEN_stopAutoRefresh = () => {
+    clearInterval(autoRefreshId);
+    console.info('IVEN auto-refresh stopped');
+  };
+})();
+</script>
 /* bottom nav */
 document.querySelectorAll('.nav-btn').forEach(b=>{
   b.addEventListener('click', (e)=>{
