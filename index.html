@@ -4,109 +4,268 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>IVEN — Cyber Forge</title>
+
+  <!-- jsPDF CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
+    /* Minimal dark UI (kept compact) */
     :root{
-      --bg-1:#050116;--bg-2:#0b0f2a;
-      --accent:#ff4ec8;--accent-2:#5be3ff;
-      --muted:#9aa5be;
-      --glass:rgba(255,255,255,0.04);
+      --bg:#090712; --card:#0f0b14; --muted:#9aa5b6; --accent1:#ff6fb5; --accent2:#6ee7ff;
+      --glass: rgba(255,255,255,0.03);
       --radius:14px;
     }
-    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;}
-    body{
-      background:radial-gradient(1000px 600px at 10% 10%,rgba(91,227,255,0.06),transparent),
-                 radial-gradient(800px 600px at 90% 90%,rgba(255,78,200,0.06),transparent),
-                 linear-gradient(180deg,var(--bg-1),var(--bg-2));
-      color:#e6eef8;padding:24px;box-sizing:border-box;
-    }
-    .wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 340px;gap:18px;}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
-          border-radius:var(--radius);padding:20px;box-shadow:0 10px 30px rgba(2,6,23,0.5);}
-    h2{margin:0 0 8px 0}
-    input,textarea,button{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);
-      background:rgba(0,0,0,0.15);color:#fff;font-size:14px;margin-top:6px;}
-    .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));border:0;color:#071022;font-weight:700;cursor:pointer;}
-    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--muted);}
-    nav.bottom{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
-      background:rgba(0,0,0,0.4);padding:10px 18px;border-radius:30px;display:flex;gap:16px;}
-    .nav-btn{background:transparent;border:0;color:var(--muted);}
-    .nav-btn.active{color:var(--accent);}
-    @media(max-width:900px){.wrap{grid-template-columns:1fr;}}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial;color:#e6eef8;background:linear-gradient(180deg,#070412 0%,#0b0710 100%);-webkit-font-smoothing:antialiased}
+    .wrap{max-width:1100px;margin:32px auto;display:grid;grid-template-columns:1fr 360px;gap:18px;padding:20px}
+    .card{background:linear-gradient(180deg,var(--glass), rgba(255,255,255,0.02));padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+    h1{margin:0 0 8px;font-size:28px}
+    label{display:block;color:var(--muted);margin-bottom:6px;font-size:13px}
+    input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit;font-size:14px}
+    textarea{min-height:80px;resize:vertical}
+    .btn{display:inline-block;padding:14px 18px;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;font-weight:700}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted);padding:10px;border-radius:10px}
+    .nav-bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;background:rgba(0,0,0,0.35);padding:10px 18px;border-radius:30px;display:flex;gap:12px}
+    .nav-bottom button{background:transparent;border:0;color:var(--muted)}
+    .stats-box{display:flex;flex-direction:column;gap:12px}
+    .stat{background:rgba(0,0,0,0.25);padding:14px;border-radius:10px}
+    .stat h3{margin:0;font-size:13px;color:var(--muted)}
+    .stat p{margin:8px 0 0;font-size:20px}
+    .small{font-size:13px;color:var(--muted)}
+    @media(max-width:900px){.wrap{grid-template-columns:1fr; padding:12px}}
   </style>
 </head>
 <body>
+
   <div class="wrap">
     <div class="card">
-      <h2>Invoice Generator</h2>
-      <label>From</label><input id="from" value="KrshnForge Shop">
-      <label>To</label><input id="to" placeholder="Customer name">
-      <label>Item</label><input id="item" placeholder="Item description">
-      <label>Price (₹)</label><input id="price" type="number" value="0">
-      <label>Notes</label><textarea id="notes"></textarea>
-      <button id="makePdf" class="btn">Generate & Download PDF</button>
+      <h1>Invoice Generator</h1>
+
+      <label>From</label>
+      <input id="from" value="KrshnForge Shop">
+
+      <label style="margin-top:12px">To</label>
+      <input id="to" placeholder="Customer name">
+
+      <label style="margin-top:12px">Item</label>
+      <input id="item" placeholder="Item description">
+
+      <label style="margin-top:12px">Price (₹)</label>
+      <input id="price" type="number" value="0">
+
+      <label style="margin-top:12px">Notes</label>
+      <textarea id="notes" placeholder="Any notes to appear on invoice"></textarea>
+
+      <div style="margin-top:16px;display:flex;gap:12px">
+        <button id="makePdf" class="btn">Generate & Download PDF</button>
+        <button id="previewBtn" class="ghost">Preview</button>
+      </div>
     </div>
 
-    <div class="card">
-      <h3>Live Stats</h3>
-      <p>Total Signups: <span id="totalSignups">0</span></p>
-      <p>Latest Signup: <span id="latestSignup">—</span></p>
-      <p>Tokens Issued: <span id="tokenCount">0</span></p>
-      <button id="refreshStats" class="ghost">Refresh</button>
-    </div>
+    <aside class="card">
+      <h1 style="font-size:18px;margin:0 0 8px">Live Stats</h1>
+      <div class="stats-box">
+        <div class="stat">
+          <h3>Total Signups</h3>
+          <p id="totalSignups">-</p>
+        </div>
+
+        <div class="stat">
+          <h3>Latest Signup</h3>
+          <p id="latestSignup">-</p>
+        </div>
+
+        <div class="stat">
+          <h3>Tokens Issued (free)</h3>
+          <p id="tokenCount">-</p>
+          <div class="small" style="margin-top:8px">Each signup gets <strong>10</strong> free tokens automatically.</div>
+        </div>
+
+        <div style="margin-top:10px">
+          <button id="openSite" class="ghost">Open IVEN Site</button>
+          <button id="refreshStats" class="ghost" style="margin-left:8px">Refresh</button>
+        </div>
+      </div>
+    </aside>
   </div>
 
-  <nav class="bottom">
-    <button class="nav-btn active">HOME</button>
+  <nav class="nav-bottom">
+    <button class="nav-btn">HOME</button>
     <button class="nav-btn">SIGNUP</button>
     <button class="nav-btn">STATS</button>
     <button class="nav-btn">PROFILE</button>
   </nav>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
-    const signupForm = 'https://forms.gle/RhxLSuZAsUor57JE9';
-    let SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTGcw0IPTiS9dS7C8Jz0CBLuozkJBlSqrPfij68738ODwWZv6V56-FsEZ-Qazqovd9z-flqoUzR1ub7/pub?gid=1075663640&single=true&output=csv'; // 👈 yahan apna published CSV link daalna hai agar chaho
+  /* IMPORTANT:
+     - Your Google Sheet CSV (published) link is inserted in SHEET_CSV_URL below.
+     - If you want to change sheet, replace the URL string variable.
+  */
+  const signupForm = 'https://forms.gle/RhxLSuZAsUor57JE9';
+  let SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTGcw0IPTiS9dS7C8Jz0CBLuozkJBlSqrPfij68738ODwWZv6V56-FsEZ-Qazqovd9z-flqoUzR1ub7/pub?gid=1075663640&single=true&output=csv';
 
-    // PDF generator
-    const { jsPDF } = window.jspdf;
-    document.getElementById("makePdf").onclick = () => {
-      const from = document.getElementById("from").value;
-      const to = document.getElementById("to").value;
-      const item = document.getElementById("item").value;
-      const price = document.getElementById("price").value;
-      const notes = document.getElementById("notes").value;
-      const doc = new jsPDF({unit:"pt",format:"a4"});
-      doc.text(`From: ${from}`,40,60);
-      doc.text(`To: ${to}`,40,80);
-      doc.text(`Item: ${item}`,40,100);
-      doc.text(`Price: ₹${price}`,40,120);
-      doc.text(`Notes: ${notes}`,40,140);
-      doc.save(`invoice_${Date.now()}.pdf`);
-    };
+  /* UI hooks */
+  const docsBtn = document.getElementById('openSite'); // opens same page (keeps behaviour)
+  const openSite = document.getElementById('openSite');
+  const refreshStats = document.getElementById('refreshStats');
 
-    // CSV fetch
-    async function fetchAndRenderStats(){
-      const totalEl=document.getElementById("totalSignups");
-      const latestEl=document.getElementById("latestSignup");
-      const tokenEl=document.getElementById("tokenCount");
-      totalEl.textContent="...";
-      latestEl.textContent="Loading...";
-      tokenEl.textContent="...";
-      if(!SHEET_CSV_URL){totalEl.textContent="0";latestEl.textContent="No sheet";tokenEl.textContent="0";return;}
-      try{
-        const res=await fetch(SHEET_CSV_URL);
-        const csv=await res.text();
-        const lines=csv.trim().split(/\r?\n/);
-        const rows=lines.slice(1);
-        const total=rows.length;
-        const last=rows[rows.length-1]?.split(",")||["—"];
-        totalEl.textContent=total;
-        latestEl.textContent=last[1]||"—";
-        tokenEl.textContent=total*10;
-      }catch(e){latestEl.textContent="Error";console.error(e);}
+  docsBtn.onclick = () => window.open(signupForm, '_blank');
+  openSite.onclick = () => window.open(location.href, '_blank');
+  refreshStats.onclick = () => fetchAndRenderStats();
+
+  /* PDF generator */
+  const { jsPDF } = window.jspdf || {};
+  document.getElementById('makePdf').onclick = () => {
+    const from = document.getElementById('from').value || 'Seller';
+    const to = document.getElementById('to').value || 'Customer';
+    const item = document.getElementById('item').value || 'Item';
+    const price = Number(document.getElementById('price').value) || 0;
+    const notes = document.getElementById('notes').value || '';
+    const doc = new jsPDF({unit:'pt', format:'a4'});
+
+    // simple styled layout
+    doc.setFillColor(5,1,22);
+    doc.rect(0,0,595,72,'F');
+    doc.setFontSize(18); doc.setTextColor(255,255,255);
+    doc.text('IVEN Invoice', 40, 40);
+
+    doc.setTextColor(16,24,34); doc.setFontSize(12);
+    doc.setFillColor(245,245,245);
+    doc.rect(36,90,520,260,'F');
+
+    doc.setTextColor(10,14,22);
+    doc.setFontSize(12);
+    let y = 120;
+    doc.text(`From: ${from}`, 50, y); y += 20;
+    doc.text(`To: ${to}`, 50, y); y += 20;
+    doc.text(`Item: ${item}`, 50, y); y += 20;
+    doc.text(`Price: ₹${price}`, 50, y); y += 20;
+    if(notes) { doc.text(`Notes:`,50,y); doc.text(notes,110,y); }
+    doc.save(`invoice_${Date.now()}.pdf`);
+  };
+
+  /* Stats fetch & render */
+  async function fetchAndRenderStats(){
+    const totalEl = document.getElementById('totalSignups');
+    const latestEl = document.getElementById('latestSignup');
+    const tokensEl = document.getElementById('tokenCount');
+
+    // loading state
+    totalEl.innerText = '...';
+    latestEl.innerText = 'loading...';
+    tokensEl.innerText = '...';
+
+    if(!SHEET_CSV_URL){
+      totalEl.innerText = '0';
+      latestEl.innerText = 'No data (publish CSV to enable)';
+      tokensEl.innerText = '0';
+      return;
     }
-    document.getElementById("refreshStats").onclick=fetchAndRenderStats;
-    fetchAndRenderStats();
+
+    try{
+      const res = await fetch(SHEET_CSV_URL);
+      if(!res.ok) throw new Error('CSV fetch failed');
+      const csv = await res.text();
+
+      // parse simple CSV (each row is a response). CSV header expected: Timestamp,Business Name,Email
+      const lines = csv.trim().split(/\r?\n/).filter(Boolean);
+      if(lines.length <= 1){
+        totalEl.innerText = '0';
+        latestEl.innerText = 'No signups yet';
+        tokensEl.innerText = '0';
+        return;
+      }
+
+      // header and rows
+      const header = parseCSVLine(lines[0]);
+      const rows = lines.slice(1).map(r=>parseCSVLine(r));
+      const total = rows.length;
+      const last = rows[rows.length-1];
+
+      // attempt to read email/business from header names
+      let emailIdx = header.findIndex(h=>/email/i.test(h));
+      let businessIdx = header.findIndex(h=>/business|name/i.test(h) && !/timestamp/i.test(h));
+
+      // fallback positions
+      if(emailIdx === -1) emailIdx = header.length-1;
+      if(businessIdx === -1) businessIdx = Math.max(1, header.length-2);
+
+      totalEl.innerText = total;
+      latestEl.innerText = `${last[businessIdx] || '-'} • ${last[emailIdx] || '-'}`;
+      tokensEl.innerText = `${total * 10}`; // each signup => 10 tokens
+      animateTokenCount(total * 10);
+    }catch(err){
+      totalEl.innerText = '-';
+      latestEl.innerText = 'Error loading sheet';
+      tokensEl.innerText = '-';
+      console.error(err);
+    }
+  }
+
+  // naive CSV line parser that accounts for quoted commas
+  function parseCSVLine(line){
+    const out=[]; let cur='', inQuotes=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(ch==='\"'){ // handle double quotes
+        if(inQuotes && line[i+1]==='\"'){ cur+='"'; i++; continue; } // escaped quote
+        inQuotes = !inQuotes; continue;
+      }
+      if(ch===',' && !inQuotes){ out.push(cur); cur=''; continue; }
+      cur+=ch;
+    }
+    out.push(cur);
+    return out.map(s=>s.trim());
+  }
+
+  /* initial */
+  fetchAndRenderStats();
+
+  /* small helper: allow paste of CSV url via prompt (ctrl+k) */
+  document.addEventListener('keydown',(e)=>{
+    if(e.ctrlKey && e.key==='k'){ // ctrl+k opens prompt
+      const u = prompt('Paste published Google Sheet CSV link (or leave blank to clear)');
+      if(u!==null){ SHEET_CSV_URL = u.trim(); fetchAndRenderStats(); }
+    }
+  });
+
+  /* Animated Token Counter */
+  function animateTokenCount(newCount){
+    const tokenEl = document.getElementById('tokenCount');
+    if(!tokenEl) return;
+    const current = Number(String(tokenEl.innerText).replace(/\D/g,'')) || 0;
+    const diff = newCount - current;
+    if(diff === 0) return;
+    const steps = 20;
+    const step = diff / steps;
+    let i=0;
+    const interval = setInterval(()=>{
+      i++;
+      tokenEl.innerText = Math.round(current + step * i);
+      if(i >= steps){
+        clearInterval(interval);
+        tokenEl.innerText = newCount;
+      }
+    }, 50); // total ~1 second
+  }
+
+  /* Auto-refresh every 30s to update stats */
+  const REFRESH_INTERVAL = 30 * 1000;
+  let isFetching = false;
+  async function safeFetchAndRender(){
+    if(isFetching) return;
+    isFetching = true;
+    try{ await fetchAndRenderStats(); }catch(e){ console.error('Auto-refresh error:', e); }
+    isFetching = false;
+  }
+  safeFetchAndRender();
+  setInterval(safeFetchAndRender, REFRESH_INTERVAL);
+
+  // expose stop function (optional)
+  window._IVEN_stopAutoRefresh = ()=>{
+    console.info('IVEN auto-refresh stopped');
+    // user can reload page to start again
+  };
   </script>
 </body>
 </html>
