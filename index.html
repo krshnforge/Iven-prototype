@@ -1,70 +1,112 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IVEN Hub</title>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#2b6ef6" />
-  <style>
-    body {
-      font-family: system-ui, Roboto;
-      margin: 0;
-      background: #f5f7fb;
-    }
-    header {
-      background: #2b6ef6;
-      color: #fff;
-      padding: 14px;
-      font-weight: 700;
-      text-align: center;
-    }
-    .btn {
-      display: block;
-      margin: 10px auto;
-      padding: 12px 18px;
-      background: #2b6ef6;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      max-width: 300px;
-      font-weight: 600;
-      font-size: 15px;
-      cursor: pointer;
-    }
-    iframe {
-      width: 100%;
-      height: 500px;
-      border: 0;
-      margin-top: 12px;
-    }
-    footer {
-      color: #666;
-      font-size: 13px;
-      text-align: center;
-      padding: 10px;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>IVEN Hub — Dashboard</title>
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#2b6ef6" />
+<style>
+  :root{--blue:#2b6ef6;--bg:#f5f7fb;--card:#fff;--muted:#666}
+  html,body{height:100%;margin:0;font-family:system-ui,Roboto,Arial;color:#0b1220;background:var(--bg)}
+  header{background:var(--blue);color:#fff;padding:10px 12px;text-align:center;font-weight:700}
+  .wrap{max-width:980px;margin:16px auto;padding:0 12px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .menu-btn{background:transparent;border:0;color:#fff;font-weight:700;padding:8px 12px;border-radius:6px;cursor:pointer}
+  .frame-wrap{margin-top:12px;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 6px 20px rgba(11,17,32,0.06)}
+  iframe{width:100%;height:calc(100vh - 120px);border:0;min-height:420px}
+  .offline{padding:20px;text-align:center;color:var(--muted)}
+  .hidden{display:none}
+  footer{padding:14px;text-align:center;color:var(--muted);font-size:13px}
+  /* small friendly button for menu */
+  .menu-actions{display:flex;gap:8px}
+  .btn{background:var(--blue);color:#fff;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+  @media(max-width:640px){ iframe{height:calc(100vh - 140px)} .topbar{flex-direction:column;align-items:center} }
+</style>
 </head>
 <body>
-  <header>IVEN Hub - All Portals</header>
+<header>IVEN Hub — Dashboard</header>
 
-  <button class="btn" onclick="openIt('https://docs.google.com/forms/d/...')">Open Form</button>
-  <button class="btn" onclick="openIt('https://docs.google.com/spreadsheets/d/19KqKVrwYzrSyiev5eLDKKskt3CvpM6bSygJAp7TJVvY/edit#gid=1075663640')">Open Dashboard</button>
-  <button class="btn" onclick="openIt('https://script.google.com/home/projects')">Open Script</button>
-  <button class="btn" onclick="openIt('https://github.com/krshnforge/Iven-prototype')">Open GitHub Repo</button>
+<div class="wrap">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:8px">
+      <button id="homeBtn" class="btn">Dashboard</button>
+    </div>
 
-  <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTGcw0IPTiS9dS7C8Jz0CBLuozkJBlSqrPfij68738ODwWZv6V56-FsEZ-Qazqovd9z-flqoUzR1ub7/pubhtml?gid=868314349&single=true"></iframe>
+    <div class="menu-actions" aria-hidden="false">
+      <!-- optional quick links (open outside) -->
+      <button class="btn" id="openForm">Form</button>
+      <button class="btn" id="openRepo">Repo</button>
+    </div>
+  </div>
 
-  <footer>Add this site to Home Screen for app view</footer>
+  <div class="frame-wrap" id="frameWrap">
+    <!-- REPLACE THE DASHBOARD PUB HTML URL BELOW with your published-sheet pubhtml url -->
+    <iframe id="dashFrame" src="" title="Token Dashboard" loading="lazy"></iframe>
 
-  <script>
-    function openIt(url) {
-      window.open(url, '_blank');
+    <div id="offlineMsg" class="offline hidden">
+      You are offline or the dashboard is unavailable. Please check your connection.
+    </div>
+  </div>
+</div>
+
+<footer>Add this site to your Home Screen for app-like access</footer>
+
+<script>
+  // ---------- CONFIG: put your published-sheet pubhtml url here ----------
+  // get this from Google Sheets: File → Publish to web → choose "Token Dashboard" sheet,
+  // then copy the link (it must be the pubhtml url, contains /pubhtml?gid=...)
+  const DASHBOARD_PUB_URL = "REPLACE_WITH_YOUR_SHEET_PUBHTML_URL";
+
+  // quick links (change as needed)
+  const FORM_URL = "https://docs.google.com/forms/d/YOUR_FORM_ID/viewform";
+  const REPO_URL = "https://github.com/krshnforge/Iven-prototype";
+
+  // set iframe src (dashboard default)
+  const iframe = document.getElementById('dashFrame');
+  const offlineMsg = document.getElementById('offlineMsg');
+
+  function loadDashboard() {
+    if (!DASHBOARD_PUB_URL || DASHBOARD_PUB_URL.includes("REPLACE_WITH")) {
+      offlineMsg.classList.remove('hidden');
+      offlineMsg.innerText = "Dashboard URL not configured. Replace DASHBOARD_PUB_URL in index.html with your sheet's published 'pubhtml' link.";
+      iframe.classList.add('hidden');
+      return;
     }
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js'));
+    iframe.src = DASHBOARD_PUB_URL;
+    iframe.classList.remove('hidden');
+    offlineMsg.classList.add('hidden');
+  }
+
+  // register handlers
+  document.getElementById('openForm').addEventListener('click', () => window.open(FORM_URL, "_blank"));
+  document.getElementById('openRepo').addEventListener('click', () => window.open(REPO_URL, "_blank"));
+  document.getElementById('homeBtn').addEventListener('click', loadDashboard);
+
+  // detect online/offline and show message
+  function updateOnlineStatus() {
+    if (navigator.onLine) {
+      offlineMsg.classList.add('hidden');
+      iframe.classList.remove('hidden');
+    } else {
+      offlineMsg.classList.remove('hidden');
+      iframe.classList.add('hidden');
+      offlineMsg.innerText = "You appear offline. Dashboard will be available when you reconnect.";
     }
-  </script>
+  }
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+
+  // Load dashboard now
+  loadDashboard();
+  updateOnlineStatus();
+
+  // register service worker if supported
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js').catch(err => {
+      console.warn('SW registration failed:', err);
+    });
+  }
+</script>
 </body>
 </html>
