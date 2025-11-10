@@ -53,60 +53,76 @@
 <footer>Add this site to your Home Screen for app-like access</footer>
 
 <script>
-  // ---------- CONFIG: put your published-sheet pubhtml url here ----------
-  // get this from Google Sheets: File → Publish to web → choose "Token Dashboard" sheet,
-  // then copy the link (it must be the pubhtml url, contains /pubhtml?gid=...)
-  const DASHBOARD_PUB_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTGcw0IPTiS9dS7C8Jz0CBLuozkJBlSqrPfij68738ODwWZv6V56-FsEZ-Qazqovd9z-flqoUzR1ub7/pubhtml?gid=868314349&single=true";
+/* ---------- CONFIG - replace with your published-sheet pubhtml url ---------- */
+const DASHBOARD_PUB_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTGwOIPTlS9dS7C8JZ0CBLuozkJBlSqrPfij6873B00WMzEv6Vs6-FsEZ-Qa/pubhtml?gid=1075663640"; 
+const IFRAME_REFRESH_MS = 30 * 1000; // refresh every 30s
 
-  // quick links (change as needed)
-  const FORM_URL = "https://docs.google.com/forms/d/YOUR_FORM_ID/viewform";
-  const REPO_URL = "https://github.com/krshnforge/Iven-prototype";
+const iframe = document.getElementById('dashFrame');
+const offlineMsg = document.getElementById('offlineMsg');
 
-  // set iframe src (dashboard default)
-  const iframe = document.getElementById('dashFrame');
-  const offlineMsg = document.getElementById('offlineMsg');
+/* Load dashboard */
+function loadDashboard() {
+  if (!DASHBOARD_PUB_URL || DASHBOARD_PUB_URL.includes("REPLACE_WITH")) {
+    offlineMsg.classList.remove('hidden');
+    offlineMsg.innerText = 'Dashboard URL not configured. Paste published-sheet "pubhtml" URL into script.';
+    iframe.classList.add('hidden');
+    return;
+  }
 
-  function loadDashboard() {
-    if (!DASHBOARD_PUB_URL || DASHBOARD_PUB_URL.includes("REPLACE_WITH")) {
-      offlineMsg.classList.remove('hidden');
-      offlineMsg.innerText = "Dashboard URL not configured. Replace DASHBOARD_PUB_URL in index.html with your sheet's published 'pubhtml' link.";
-      iframe.classList.add('hidden');
-      return;
+  iframe.src = DASHBOARD_PUB_URL;
+  iframe.classList.remove('hidden');
+  offlineMsg.classList.add('hidden');
+}
+
+/* Auto refresh logic */
+let refreshTimer = null;
+function startAutoRefresh() {
+  stopAutoRefresh();
+  refreshTimer = setInterval(() => {
+    try {
+      iframe.src = iframe.src; // reload iframe
+    } catch (e) {
+      console.warn('Auto-refresh error:', e);
     }
-    iframe.src = DASHBOARD_PUB_URL;
-    iframe.classList.remove('hidden');
+  }, IFRAME_REFRESH_MS);
+}
+
+function stopAutoRefresh() {
+  if (refreshTimer) {
+    clearInterval(refreshTimer);
+    refreshTimer = null;
+  }
+}
+
+/* Online/offline handling */
+function updateOnlineStatus() {
+  if (navigator.onLine) {
     offlineMsg.classList.add('hidden');
+    iframe.classList.remove('hidden');
+    startAutoRefresh();
+  } else {
+    offlineMsg.classList.remove('hidden');
+    offlineMsg.innerText = 'You are offline. Dashboard will be available when you reconnect.';
+    iframe.classList.add('hidden');
+    stopAutoRefresh();
   }
+}
 
-  // register handlers
-  document.getElementById('openForm').addEventListener('click', () => window.open(FORM_URL, "_blank"));
-  document.getElementById('openRepo').addEventListener('click', () => window.open(REPO_URL, "_blank"));
-  document.getElementById('homeBtn').addEventListener('click', loadDashboard);
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
 
-  // detect online/offline and show message
-  function updateOnlineStatus() {
-    if (navigator.onLine) {
-      offlineMsg.classList.add('hidden');
-      iframe.classList.remove('hidden');
-    } else {
-      offlineMsg.classList.remove('hidden');
-      iframe.classList.add('hidden');
-      offlineMsg.innerText = "You appear offline. Dashboard will be available when you reconnect.";
-    }
-  }
-  window.addEventListener('online', updateOnlineStatus);
-  window.addEventListener('offline', updateOnlineStatus);
-
-  // Load dashboard now
+/* Init on load */
+document.addEventListener('DOMContentLoaded', () => {
   loadDashboard();
   updateOnlineStatus();
+});
 
-  // register service worker if supported
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js').catch(err => {
-      console.warn('SW registration failed:', err);
-    });
-  }
+/* Service worker registration */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js').catch(err => {
+    console.warn('Service Worker failed:', err);
+  });
+}
 </script>
 </body>
 </html>
