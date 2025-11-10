@@ -1,22 +1,12 @@
 {
   "name": "IVEN Hub",
   "short_name": "IVEN",
-  "description": "Unified access to all IVEN systems — forms, dashboards, and scripts.",
-  "start_url": "/Iven-prototype/",
-  "scope": "/Iven-prototype/",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#f5f7fb",
   "theme_color": "#2b6ef6",
   "icons": [
-    {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
