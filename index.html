@@ -3,107 +3,228 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IVEN Hub — Dashboard</title>
+<title>IVEN Hub — Cyber Dashboard</title>
 <link rel="manifest" href="/manifest.json" />
-<meta name="theme-color" content="#2b6ef6" />
+<meta name="theme-color" content="#07102a" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
 <style>
-  :root{--blue:#2b6ef6;--bg:#f5f7fb;--card:#fff;--muted:#666}
-  html,body{height:100%;margin:0;font-family:system-ui,Roboto,Arial;color:#0b1220;background:var(--bg)}
-  header{background:var(--blue);color:#fff;padding:10px 12px;text-align:center;font-weight:700}
-  .wrap{max-width:980px;margin:16px auto;padding:0 12px}
-  .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .menu-btn{background:transparent;border:0;color:#fff;font-weight:700;padding:8px 12px;border-radius:6px;cursor:pointer}
-  .frame-wrap{margin-top:12px;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 6px 20px rgba(11,17,32,0.06)}
-  iframe{width:100%;height:calc(100vh - 120px);border:0;min-height:420px}
-  .offline{padding:20px;text-align:center;color:var(--muted)}
-  .hidden{display:none}
-  footer{padding:14px;text-align:center;color:var(--muted);font-size:13px}
-  /* small friendly button for menu */
-  .menu-actions{display:flex;gap:8px}
-  .btn{background:var(--blue);color:#fff;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
-  @media(max-width:640px){ iframe{height:calc(100vh - 140px)} .topbar{flex-direction:column;align-items:center} }
+  :root{
+    --bg:#050611;
+    --card:#07102a;
+    --glass: rgba(255,255,255,0.04);
+    --neon:#4dd0e1;
+    --accent:#7c4dff;
+    --muted:rgba(255,255,255,0.55);
+    --glass-2: rgba(124,77,255,0.06);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial;color:#e6eef8;background:
+    radial-gradient(1200px 400px at 10% 10%, rgba(124,77,255,0.06), transparent 8%),
+    linear-gradient(180deg,#060810 0%, #051022 100%);-webkit-font-smoothing:antialiased}
+
+  header{
+    background: linear-gradient(90deg,var(--accent),#2bb6ff 140%);
+    color:white;
+    padding:12px 18px;
+    text-align:center;
+    font-weight:700;
+    letter-spacing:1px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.5);
+    position:sticky;top:0;z-index:40;
+  }
+  .wrap{max-width:1100px;margin:20px auto;padding:14px;display:grid;grid-template-columns:1fr 320px;gap:18px}
+  .left{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;box-shadow:0 6px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.02)}
+  .right{background:linear-gradient(180deg,var(--glass-2),transparent);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .title{display:flex;align-items:center;gap:12px}
+  .logo{
+    width:44px;height:44px;border-radius:9px;background:linear-gradient(135deg,var(--neon),var(--accent));
+    display:flex;align-items:center;justify-content:center;color:#04111b;font-weight:800;box-shadow:0 6px 20px rgba(124,77,255,0.12);
+    transform:translateY(0);transition:transform .25s;
+  }
+  .logo:hover{transform:translateY(-4px) rotate(-6deg)}
+  .h1{font-weight:800;font-size:18px;color:#eaf8ff}
+  .muted{color:var(--muted);font-size:13px}
+
+  .controls{display:flex;align-items:center;gap:8px}
+  .btn{background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+       border:1px solid rgba(255,255,255,0.04);color:#eaf8ff;padding:10px 14px;border-radius:8px;cursor:pointer;
+       font-weight:600;box-shadow:0 6px 18px rgba(5,8,16,0.6);transition:transform .12s,box-shadow .12s}
+  .btn:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(7,12,30,0.6)}
+  .ghost{background:transparent;border:1px dashed rgba(255,255,255,0.04)}
+
+  /* quick links + search */
+  .quick{display:flex;gap:8px;align-items:center}
+  .select, .search{
+    padding:8px 10px;border-radius:8px;background:var(--card);border:1px solid rgba(255,255,255,0.03);color:#dff7ff;
+  }
+  .search input{background:transparent;border:0;outline:none;color:#dff7ff;width:160px}
+  .dropdown{position:relative}
+  .menu{position:absolute;right:0;top:48px;background:linear-gradient(180deg,#061024, #07122a);padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-width:220px;display:none}
+  .menu.open{display:block}
+  .menu a{display:block;color:#dff7ff;padding:8px;border-radius:6px;text-decoration:none;font-weight:500}
+  .menu a:hover{background:rgba(255,255,255,0.02)}
+
+  /* frame area */
+  .frame-wrap{margin-top:8px;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
+  iframe{width:100%;height:540px;border:0;display:block;background:white}
+
+  /* right column cards */
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:8px;border:1px solid rgba(255,255,255,0.02)}
+  .stat{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.02);font-weight:600}
+  .stat:last-child{border-bottom:0}
+
+  /* cyber accents */
+  .neon-line{height:3px;background:linear-gradient(90deg,var(--neon),var(--accent));border-radius:4px;margin:12px 0;box-shadow:0 6px 18px rgba(77,208,225,0.08)}
+
+  /* responsive */
+  @media(max-width:920px){
+    .wrap{grid-template-columns:1fr; padding:12px}
+    iframe{height:420px}
+    .search input{width:120px}
+  }
 </style>
 </head>
 <body>
-<header>IVEN Hub — Dashboard</header>
+<header>IVEN Hub — All Portals</header>
 
 <div class="wrap">
-  <div class="topbar">
-    <div style="display:flex;align-items:center;gap:8px">
-      <button id="homeBtn" class="btn">Dashboard</button>
+  <div class="left">
+    <div class="topbar">
+      <div class="title">
+        <div class="logo">IV</div>
+        <div>
+          <div class="h1">IVEN Hub</div>
+          <div class="muted">Central portal — open forms, dashboards and scripts</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="quick">
+          <div class="dropdown">
+            <button class="btn" id="quickBtn">Quick Links ▾</button>
+            <div class="menu" id="quickMenu">
+              <!-- quick links injected by JS -->
+            </div>
+          </div>
+
+          <div class="search" title="Open by URL">
+            <form id="quickOpenForm" onsubmit="return openByUrl()">
+              <input id="openUrlInput" placeholder="paste URL & Enter" autocomplete="off" />
+            </form>
+          </div>
+        </div>
+
+        <button class="btn ghost" id="installBtn" style="display:none">Install App</button>
+      </div>
     </div>
 
-    <div class="menu-actions" aria-hidden="false">
-      <!-- optional quick links (open outside) -->
-      <button class="btn" id="openForm">Form</button>
-      <button class="btn" id="openRepo">Repo</button>
+    <div class="neon-line"></div>
+
+    <div class="frame-wrap" id="frameWrap">
+      <iframe id="dashFrame" src="" title="Token Dashboard" loading="lazy"></iframe>
+      <div id="offlineMsg" style="padding:12px;display:none;background:#07122a;color:var(--muted);font-size:14px">You are offline — dashboard will appear when connection is restored.</div>
     </div>
   </div>
 
-  <div class="frame-wrap" id="frameWrap">
-    <!-- REPLACE THE DASHBOARD PUB HTML URL BELOW with your published-sheet pubhtml url -->
-    <iframe id="dashFrame" src="" title="Token Dashboard" loading="lazy"></iframe>
+  <aside class="right">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>Live Stats</strong>
+        <small class="muted">Auto-refresh enabled</small>
+      </div>
+      <div style="height:10px"></div>
+      <div class="stat"><div>Total signups</div><div id="statSignups">—</div></div>
+      <div class="stat"><div>Total tokens</div><div id="statTokens">—</div></div>
+      <div class="stat"><div>Average token value</div><div id="statAvg">—</div></div>
 
-    <div id="offlineMsg" class="offline hidden">
-      You are offline or the dashboard is unavailable. Please check your connection.
+      <div style="height:12px"></div>
+      <div style="font-size:13px;color:var(--muted)">Quick Actions</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+        <button class="btn" id="openForm">Open Form</button>
+        <button class="btn" id="openRepo" style="background:linear-gradient(90deg,#2bb6ff,#7c4dff)">Open GitHub</button>
+        <button class="btn ghost" id="refreshBtn">Reload Dashboard</button>
+      </div>
     </div>
-  </div>
+  </aside>
 </div>
 
-<footer>Add this site to your Home Screen for app-like access</footer>
+<footer style="text-align:center;color:var(--muted);padding:18px;font-size:13px">Add this site to Home Screen for app view</footer>
 
 <script>
-/* ---------- CONFIG - replace with your published-sheet pubhtml url ---------- */
-const DASHBOARD_PUB_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTGcw0IPTiS9dS7C8Jz0CBLuozkJBlSqrPfij68738ODwWZv6V56-FsEZ-Qazqovd9z-flqoUzR1ub7/pubhtml?gid=868314349&single=true"; 
-const IFRAME_REFRESH_MS = 30 * 1000; // refresh every 30s
+/* ---------- CONFIG - replace these URLs ---------- */
+/* Replace with your published-sheet 'pubhtml' URL (File → Publish to web → choose sheet 'Token Dashboard' and copy link) */
+const DASHBOARD_PUB_URL = '--- REPLACE WITH PUBLISHED SHEET PUBHTML URL ---';
 
+/* Quick links - change names and URLs as needed */
+const QUICK_LINKS = [
+  {name:'Token Dashboard', url: DASHBOARD_PUB_URL},
+  {name:'Sign-up Form', url: '--- REPLACE WITH GOOGLE FORM URL ---'},
+  {name:'Script Editor', url: 'https://script.google.com/home/projects'}, 
+  {name:'GitHub Repo', url: '--- REPLACE WITH YOUR GITHUB PAGES URL OR REPO ---'}
+];
+/* auto refresh interval ms */
+const IFRAME_REFRESH_MS = 30 * 1000;
+
+/* ---------- UI logic ---------- */
 const iframe = document.getElementById('dashFrame');
 const offlineMsg = document.getElementById('offlineMsg');
+const quickBtn = document.getElementById('quickBtn');
+const quickMenu = document.getElementById('quickMenu');
 
-/* Load dashboard */
-function loadDashboard() {
-  if (!DASHBOARD_PUB_URL || DASHBOARD_PUB_URL.includes("REPLACE_WITH")) {
-    offlineMsg.classList.remove('hidden');
-    offlineMsg.innerText = 'Dashboard URL not configured. Paste published-sheet "pubhtml" URL into script.';
-    iframe.classList.add('hidden');
+function populateQuickMenu(){
+  quickMenu.innerHTML = '';
+  QUICK_LINKS.forEach(link=>{
+    const a = document.createElement('a');
+    a.href = '#';
+    a.textContent = link.name;
+    a.onclick = (e=>{
+      e.preventDefault();
+      window.open(link.url,'_blank');
+      quickMenu.classList.remove('open');
+    });
+    quickMenu.appendChild(a);
+  });
+}
+populateQuickMenu();
+
+quickBtn.addEventListener('click',()=> quickMenu.classList.toggle('open'));
+
+/* open by URL (search box) */
+function openByUrl(){
+  const val = document.getElementById('openUrlInput').value.trim();
+  if(!val) return false;
+  let url = val;
+  if(!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  window.open(url,'_blank');
+  document.getElementById('openUrlInput').value = '';
+  return false;
+}
+
+/* dashboard load & fallback handling */
+function loadDashboard(){
+  if(!DASHBOARD_PUB_URL || DASHBOARD_PUB_URL.includes('REPLACE')){
+    offlineMsg.style.display = 'block';
+    offlineMsg.innerText = 'Dashboard URL not configured. Paste published-sheet "pubhtml" URL into the script config.';
+    iframe.style.display = 'none';
     return;
   }
-
   iframe.src = DASHBOARD_PUB_URL;
-  iframe.classList.remove('hidden');
-  offlineMsg.classList.add('hidden');
+  iframe.style.display = 'block';
+  offlineMsg.style.display = 'none';
 }
 
-/* Auto refresh logic */
-let refreshTimer = null;
-function startAutoRefresh() {
-  stopAutoRefresh();
-  refreshTimer = setInterval(() => {
-    try {
-      iframe.src = iframe.src; // reload iframe
-    } catch (e) {
-      console.warn('Auto-refresh error:', e);
-    }
-  }, IFRAME_REFRESH_MS);
-}
-
-function stopAutoRefresh() {
-  if (refreshTimer) {
-    clearInterval(refreshTimer);
-    refreshTimer = null;
-  }
-}
-
-/* Online/offline handling */
-function updateOnlineStatus() {
-  if (navigator.onLine) {
-    offlineMsg.classList.add('hidden');
-    iframe.classList.remove('hidden');
+/* online/offline handling */
+function updateOnlineStatus(){
+  if(navigator.onLine){
+    offlineMsg.style.display = 'none';
+    iframe.style.display = 'block';
     startAutoRefresh();
   } else {
-    offlineMsg.classList.remove('hidden');
-    offlineMsg.innerText = 'You are offline. Dashboard will be available when you reconnect.';
-    iframe.classList.add('hidden');
+    offlineMsg.style.display = 'block';
+    offlineMsg.innerText = 'You are offline — dashboard will be available when you reconnect.';
+    iframe.style.display = 'none';
     stopAutoRefresh();
   }
 }
@@ -111,18 +232,54 @@ function updateOnlineStatus() {
 window.addEventListener('online', updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
 
-/* Init on load */
-document.addEventListener('DOMContentLoaded', () => {
+/* auto-refresh logic */
+let refreshTimer = null;
+function startAutoRefresh(){
+  stopAutoRefresh();
+  refreshTimer = setInterval(()=>{
+    try{
+      // try soft reload if same-origin
+      if(iframe && iframe.contentWindow) iframe.contentWindow.location.replace(iframe.src);
+      else iframe.src = iframe.src;
+    }catch(e){ iframe.src = iframe.src; }
+  }, IFRAME_REFRESH_MS);
+}
+function stopAutoRefresh(){ if(refreshTimer){ clearInterval(refreshTimer); refreshTimer=null } }
+
+/* wire buttons */
+document.getElementById('openForm').addEventListener('click',()=> window.open(QUICK_LINKS[1].url,'_blank'));
+document.getElementById('openRepo').addEventListener('click',()=> window.open(QUICK_LINKS[3].url,'_blank'));
+document.getElementById('refreshBtn').addEventListener('click',()=> { iframe.src = iframe.src; });
+
+/* Install prompt (PWA) */
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'inline-block';
+});
+installBtn.addEventListener('click', async () => {
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const choice = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  installBtn.style.display = 'none';
+});
+
+/* init */
+document.addEventListener('DOMContentLoaded', ()=>{
   loadDashboard();
   updateOnlineStatus();
 });
 
-/* Service worker registration */
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js').catch(err => {
-    console.warn('Service Worker failed:', err);
-  });
-}
+/* small UX: close quick menu on click outside */
+document.addEventListener('click', (e)=>{
+  if(!quickBtn.contains(e.target) && !quickMenu.contains(e.target)) quickMenu.classList.remove('open');
+});
+
+/* For demo: try to fetch some simple stats (optional) */
+/* NOTE: CORS prevents reading sheet HTML from other origins — so advanced parsing needs server-side or Apps Script. */
 </script>
 </body>
 </html>
