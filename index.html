@@ -175,11 +175,32 @@ reloadDashBtn.addEventListener('click', ()=> { iframe.src = iframe.src; });
 window.addEventListener('online', ()=> { startAutoRefresh(); });
 window.addEventListener('offline', ()=> { stopAutoRefresh(); });
 
-/* small demo: populate stats placeholders (can't read sheet cross-origin).
-   If you want real live stats, I'll give you an Apps Script webapp that returns JSON and then this JS can fetch it. */
-document.getElementById('statSignups').innerText = '5';
-document.getElementById('statTokens').innerText = '40';
-document.getElementById('statAvg').innerText = '1.1824';
+/* ---------- Fetch live stats from Apps Script web app ---------- */
+const DASHBOARD_API_URL = 'https://script.google.com/macros/s/AKfycbxs9baRvJoMCb540cw1VYn0SLwG2xt8LnQrlnSwPnEk6CVNp7PVS8G1ViWkfgyY3ECPHQ/exec';
+
+async function fetchAndUpdateStats() {
+  try {
+    const res = await fetch(DASHBOARD_API_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = (value !== undefined && value !== null) ? value : '—';
+    };
+
+    setText('statSignups', data.totalSignups);
+    setText('statTokens', data.totalTokens);
+    setText('statAvg', data.avgValue);
+
+  } catch (err) {
+    console.warn('Stats fetch failed', err);
+  }
+}
+
+// run once now and then every 30 seconds
+fetchAndUpdateStats();
+setInterval(fetchAndUpdateStats, 30 * 1000);
 
 /* initialize */
 document.addEventListener('DOMContentLoaded', ()=>{
